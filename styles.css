@@ -1,0 +1,32 @@
+/* Hide ribbon */
+.ultrafocus-ribbon.mod-macos.is-hidden-frameless:not(.is-fullscreen):not(.is-popout-window) .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+  padding-left: calc(var(--frame-left-space) + var(--ribbon-width));
+}
+
+.ultrafocus-ribbon .workspace-ribbon.mod-left {
+  display:none;
+}
+.ultrafocus-ribbon .workspace-ribbon.mod-right {
+  visibility:hidden;
+  position:absolute;
+}
+.ultrafocus-ribbon .workspace-split.mod-right-split {
+  margin-right:0;
+}
+.ultrafocus-ribbon .workspace-split.mod-left-split {
+  margin-left:0;
+}
+
+/* Hide status */
+.ultrafocus-status .status-bar {
+	display:none;
+} 
+
+/* Hide tabs */
+.ultrafocus-tabs .mod-root .workspace-tabs .workspace-tab-header-container {
+	display: none;
+}
+
+.ultrafocus-tabs .mod-top-left-space .view-header {
+	padding-left: var(--frame-left-space);
+}
