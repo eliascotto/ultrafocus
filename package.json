@@ -1,15 +1,20 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-ultrafocus",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A plugin to turn Obsidian into the ultimate platform for focused writing.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"obsidian",
+		"obsidian plugin",
+		"focused writing",
+		"writing"
+	],
+	"author": "Elia Scotto",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
