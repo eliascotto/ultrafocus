@@ -1,7 +1,7 @@
 {
 	"id": "ultrafocus",
 	"name": "Ultrafocus",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "A plugin to turn Obsidian into the ultimate platform for focused writing.",
 	"author": "Elia Scotto",

@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-ultrafocus",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A plugin to turn Obsidian into the ultimate platform for focused writing.",
 	"main": "main.js",
 	"scripts": {
