@@ -29,12 +29,11 @@ export default class Ultrafocus extends Plugin {
 
 		this.addCommand({
 			id: 'toggle-ultrafocus',
-			name: 'Toggle Ultrafocus',
+			name: 'Toggle On/Off',
 			callback: () => {
 				this.active = !this.active;
 				this.updateStyle();
 			},
-			hotkeys: [{ modifiers: ['Ctrl'], key: 'space' }]
 		});
 	}
 
