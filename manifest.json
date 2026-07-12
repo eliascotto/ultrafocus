@@ -3,7 +3,7 @@
 	"name": "Ultrafocus",
 	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "A plugin that transforms your workspace into the ultimate platform for focused writing.",
+	"description": "Transform your workspace into the ultimate platform for focused writing.",
 	"author": "Elia Scotto",
 	"authorUrl": "https://scotto.me",
 	"isDesktopOnly": false
