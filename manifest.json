@@ -1,10 +1,10 @@
 {
 	"id": "ultrafocus",
 	"name": "Ultrafocus",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Transform your workspace into the ultimate platform for focused writing.",
 	"author": "Elia Scotto",
 	"authorUrl": "https://scotto.me",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }

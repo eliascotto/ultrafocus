@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: UltrafocusSettings = {
 export default class Ultrafocus extends Plugin {
 	settings: UltrafocusSettings;
 
-	active: boolean = false;
+	active = false;
 	leftSidebarCollapsed: boolean;
 	rightSidebarCollapsed: boolean;
 
@@ -28,7 +28,7 @@ export default class Ultrafocus extends Plugin {
 		this.addSettingTab(new UltrafocusSettingsTab(this.app, this));
 
 		this.addCommand({
-			id: 'toggle-ultrafocus',
+			id: 'toggle',
 			name: 'Toggle On/Off',
 			callback: () => {
 				this.active = !this.active;
@@ -76,15 +76,15 @@ export default class Ultrafocus extends Plugin {
 
 	updateStyle() {
 		if (this.settings.hideRibbon) {
-			document.body.classList.toggle('ultrafocus-ribbon', this.active);
+			activeDocument.body.classList.toggle('ultrafocus-ribbon', this.active);
 		}
 
 		if (this.settings.hideStatus) {
-			document.body.classList.toggle('ultrafocus-status', this.active);
+			activeDocument.body.classList.toggle('ultrafocus-status', this.active);
 		}
 
 		if (this.settings.hideTabs) {
-			document.body.classList.toggle('ultrafocus-tabs', this.active);
+			activeDocument.body.classList.toggle('ultrafocus-tabs', this.active);
 		}
 
 		if (this.active) {
@@ -92,9 +92,9 @@ export default class Ultrafocus extends Plugin {
 			this.collapseSidebar();
 		} else {
 			this.restoreSidebar();
+			}
 		}
 	}
-};
 
 class UltrafocusSettingsTab extends PluginSettingTab {
 	plugin: Ultrafocus;
@@ -104,7 +104,7 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		let { containerEl } = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
@@ -112,9 +112,9 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.setName('Hide app ribbon')
 			.setDesc('Hides the Obsidian menu. Warning: to open Settings you will need use the hotkey (default is CMD + ,)')
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideTabs)
-				.onChange((value) => {
+				.onChange(async (value) => {
 					this.plugin.settings.hideTabs = value;
-					this.plugin.saveData(this.plugin.settings);
+					await this.plugin.saveSettings();
 				})
 			);
 
@@ -122,9 +122,9 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.setName('Hide tab bar')
 			.setDesc('Hides the tab container at the top of the window.')
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideTabs)
-				.onChange((value) => {
+				.onChange(async (value) => {
 					this.plugin.settings.hideTabs = value;
-					this.plugin.saveData(this.plugin.settings);
+					await this.plugin.saveSettings();
 				})
 			);
 
@@ -132,9 +132,9 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.setName('Hide status bar')
 			.setDesc('Hides word count, character count and backlink count.')
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideStatus)
-				.onChange((value) => {
+				.onChange(async (value) => {
 					this.plugin.settings.hideStatus = value;
-					this.plugin.saveData(this.plugin.settings);
+					await this.plugin.saveSettings();
 				})
 			);
 
@@ -142,9 +142,9 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.setName('Hide left sidebar')
 			.setDesc('Collapse left sidebar when active.')
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideSidebarLeft)
-				.onChange((value) => {
+				.onChange(async (value) => {
 					this.plugin.settings.hideSidebarLeft = value;
-					this.plugin.saveData(this.plugin.settings);
+					await this.plugin.saveSettings();
 				})
 			);
 
@@ -152,10 +152,10 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.setName('Hide right sidebar')
 			.setDesc('Collapse right sidebar when active.')
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideSidebarRight)
-				.onChange((value) => {
+				.onChange(async (value) => {
 					this.plugin.settings.hideSidebarRight = value;
-					this.plugin.saveData(this.plugin.settings);
+					await this.plugin.saveSettings();
 				})
 			);
 	}
-};
+}
