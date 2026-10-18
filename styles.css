@@ -3,18 +3,26 @@
   padding-left: calc(var(--frame-left-space) + var(--ribbon-width));
 }
 
-.ultrafocus-ribbon .workspace-ribbon.mod-left {
-  display:none;
+/* Obsidian 1.14 uses mod-primary/mod-secondary instead of mod-left/mod-right. */
+body.ultrafocus-ribbon {
+  --ribbon-width: 0px;
 }
-.ultrafocus-ribbon .workspace-ribbon.mod-right {
-  visibility:hidden;
-  position:absolute;
+body.ultrafocus-ribbon .workspace-ribbon,
+body.ultrafocus-ribbon .side-dock-ribbon,
+body.ultrafocus-ribbon .workspace-drawer-ribbon {
+  display: none;
 }
 .ultrafocus-ribbon .workspace-split.mod-right-split {
   margin-right:0;
 }
 .ultrafocus-ribbon .workspace-split.mod-left-split {
   margin-left:0;
+}
+.ultrafocus-ribbon .workspace-split.mod-primary-split {
+  margin-inline-start: 0;
+}
+.ultrafocus-ribbon .workspace-split.mod-secondary-split {
+  margin-inline-end: 0;
 }
 
 /* Hide status */
