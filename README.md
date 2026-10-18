@@ -1,8 +1,8 @@
-# Ultrafocus
+# [Ultrafocus](https://community.obsidian.md/plugins/ultrafocus)
 
 > Hide Everything Everywhere All at Once
 
-A plugin to turn Obsidian into the ultimate platform for focused writing.
+A plugin to turn Obsidian into the ultimate platform for focused writing. [Obsidian store page](https://community.obsidian.md/plugins/ultrafocus).
 
 **What it does**: hides all elements like tabs, status, ribbon, sidebars, etc. All with a single toggle command, no buttons.
 
@@ -10,9 +10,11 @@ A plugin to turn Obsidian into the ultimate platform for focused writing.
 
 ## Install
 
-Getting this plugin approved in Obsidian Community repo was a bit of a pain. But you can install it manually very easy.
+Install it directly from the store. Check your plugin browsers.
 
-In your Obsidian vault, we clone this repo, install the deps and build it. 
+### Locally
+
+To install it locally in your Obsidian vault, clone this repo, install the deps then build it. 
 
 ```bash
 cd YourVault/.obsidian/plugins/
