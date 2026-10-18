@@ -1,26 +1,33 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Platform, Plugin, PluginSettingTab, Setting, WorkspaceMobileDrawer, WorkspaceSidedock } from 'obsidian';
+
 interface UltrafocusSettings {
 	hideRibbon: boolean;
 	hideStatus: boolean;
 	hideTabs: boolean;
+	hideTitleBar: boolean;
 	hideSidebarLeft: boolean;
 	hideSidebarRight: boolean;
+	hideMobileNavigation: boolean;
+	hideMobileToolbar: boolean;
 }
 
 const DEFAULT_SETTINGS: UltrafocusSettings = {
 	hideRibbon: true,
 	hideStatus: true,
 	hideTabs: true,
+	hideTitleBar: true,
 	hideSidebarLeft: true,
 	hideSidebarRight: true,
+	hideMobileNavigation: true,
+	hideMobileToolbar: true,
 }
 
 export default class Ultrafocus extends Plugin {
 	settings: UltrafocusSettings;
 
 	active = false;
-	leftSidebarCollapsed: boolean;
-	rightSidebarCollapsed: boolean;
+	private sidebarStates = new Map<WorkspaceSidedock | WorkspaceMobileDrawer, boolean>();
+	private styledBodies = new Set<HTMLElement>();
 
 	async onload() {
 		await this.loadSettings();
@@ -38,7 +45,8 @@ export default class Ultrafocus extends Plugin {
 	}
 
 	onunload() {
-		console.log('Unloading Ultrafocus plugin');
+		this.active = false;
+		this.updateStyle();
 	}
 
 	async loadSettings() {
@@ -46,55 +54,48 @@ export default class Ultrafocus extends Plugin {
 	}
 
 	async saveSettings() {
+		this.updateStyle();
 		await this.saveData(this.settings);
 	}
 
-	storeSidebarState() {
-		this.leftSidebarCollapsed = this.app.workspace.leftSplit.collapsed;
-		this.rightSidebarCollapsed = this.app.workspace.rightSplit.collapsed;
-	}
-
-	collapseSidebar() {
-		if (this.settings.hideSidebarLeft) {
-			this.app.workspace.leftSplit.collapse();
-		}
-
-		if (this.settings.hideSidebarRight) {
-			this.app.workspace.rightSplit.collapse();
-		}
-	}
-
-	restoreSidebar() {
-		if (!this.leftSidebarCollapsed) {
-			this.app.workspace.leftSplit.expand();
-		}
-
-		if (!this.rightSidebarCollapsed) {
-			this.app.workspace.rightSplit.expand();
-		}
-	}
-
 	updateStyle() {
-		if (this.settings.hideRibbon) {
-			activeDocument.body.classList.toggle('ultrafocus-ribbon', this.active);
+		// Remember every document touched, including desktop pop-out windows.
+		this.styledBodies.add(activeDocument.body);
+		for (const body of this.styledBodies) {
+			body.classList.toggle('ultrafocus-ribbon', this.active && this.settings.hideRibbon);
+			body.classList.toggle('ultrafocus-status', this.active && this.settings.hideStatus);
+			body.classList.toggle('ultrafocus-tabs', this.active && this.settings.hideTabs);
+			body.classList.toggle('ultrafocus-title-bar', this.active && this.settings.hideTitleBar);
+			body.classList.toggle('ultrafocus-mobile-navigation', this.active && this.settings.hideMobileNavigation);
+			body.classList.toggle('ultrafocus-mobile-toolbar', this.active && this.settings.hideMobileToolbar);
 		}
 
-		if (this.settings.hideStatus) {
-			activeDocument.body.classList.toggle('ultrafocus-status', this.active);
+		if (!this.active) {
+			this.styledBodies.clear();
 		}
 
-		if (this.settings.hideTabs) {
-			activeDocument.body.classList.toggle('ultrafocus-tabs', this.active);
-		}
-
-		if (this.active) {
-			this.storeSidebarState();
-			this.collapseSidebar();
-		} else {
-			this.restoreSidebar();
+		const sidebars: [WorkspaceSidedock | WorkspaceMobileDrawer, boolean][] = [
+			[this.app.workspace.leftSplit, this.settings.hideSidebarLeft],
+			[this.app.workspace.rightSplit, this.settings.hideSidebarRight],
+		];
+		for (const [sidebar, hide] of sidebars) {
+			if (this.active && hide) {
+				// Settings changes must not overwrite the original sidebar state.
+				if (!this.sidebarStates.has(sidebar)) {
+					this.sidebarStates.set(sidebar, sidebar.collapsed);
+				}
+				sidebar.collapse();
+			} else if (this.sidebarStates.has(sidebar)) {
+				if (this.sidebarStates.get(sidebar)) {
+					sidebar.collapse();
+				} else {
+					sidebar.expand();
+				}
+				this.sidebarStates.delete(sidebar);
 			}
 		}
 	}
+}
 
 class UltrafocusSettingsTab extends PluginSettingTab {
 	plugin: Ultrafocus;
@@ -110,10 +111,10 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Hide app ribbon')
-			.setDesc('Hides the Obsidian menu. Warning: to open Settings you will need use the hotkey (default is CMD + ,)')
-			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideTabs)
+			.setDesc('Hides the app ribbon. Use the command palette to open Settings while focused.')
+			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideRibbon)
 				.onChange(async (value) => {
-					this.plugin.settings.hideTabs = value;
+					this.plugin.settings.hideRibbon = value;
 					await this.plugin.saveSettings();
 				})
 			);
@@ -124,6 +125,16 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideTabs)
 				.onChange(async (value) => {
 					this.plugin.settings.hideTabs = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Hide tab title bar')
+			.setDesc('Hides the note title and actions bar below the tabs on desktop and mobile.')
+			.addToggle(toggle => toggle.setValue(this.plugin.settings.hideTitleBar)
+				.onChange(async (value) => {
+					this.plugin.settings.hideTitleBar = value;
 					await this.plugin.saveSettings();
 				})
 			);
@@ -157,5 +168,27 @@ class UltrafocusSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+
+		if (Platform.isMobile) {
+			new Setting(containerEl)
+				.setName('Hide mobile navigation bar')
+				.setDesc('Hides the bottom navigation bar while focused. Use your pull-down Quick Action to toggle focus off.')
+				.addToggle(toggle => toggle.setValue(this.plugin.settings.hideMobileNavigation)
+					.onChange(async (value) => {
+						this.plugin.settings.hideMobileNavigation = value;
+						await this.plugin.saveSettings();
+					})
+				);
+
+			new Setting(containerEl)
+				.setName('Hide mobile editing toolbar')
+				.setDesc('Hides the editing toolbar above the keyboard while focused.')
+				.addToggle(toggle => toggle.setValue(this.plugin.settings.hideMobileToolbar)
+					.onChange(async (value) => {
+						this.plugin.settings.hideMobileToolbar = value;
+						await this.plugin.saveSettings();
+					})
+				);
+		}
 	}
 }

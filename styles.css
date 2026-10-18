@@ -1,5 +1,5 @@
 /* Hide ribbon */
-.ultrafocus-ribbon.mod-macos.is-hidden-frameless:not(.is-fullscreen):not(.is-popout-window) .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+.ultrafocus-ribbon.mod-macos:not(.is-mobile).is-hidden-frameless:not(.is-fullscreen):not(.is-popout-window) .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
   padding-left: calc(var(--frame-left-space) + var(--ribbon-width));
 }
 
@@ -27,6 +27,40 @@
 	display: none;
 }
 
-.ultrafocus-tabs .mod-top-left-space .view-header {
+.ultrafocus-tabs:not(.is-mobile) .mod-top-left-space .view-header {
 	padding-left: var(--frame-left-space);
+}
+
+/* Hide note title/actions bars without hiding the note's inline title. */
+.ultrafocus-title-bar .mod-root .view-header {
+	display: none;
+}
+
+.ultrafocus-title-bar .mod-root {
+	--view-header-height: 0px;
+}
+
+/* Reclaim the header space in floating/full-screen phone layouts. */
+body.is-phone.ultrafocus-title-bar:is(.is-floating-nav, .auto-full-screen) .mod-root {
+	--view-top-spacing: calc(var(--safe-area-inset-top) + 8px);
+	--view-top-spacing-markdown: calc(var(--safe-area-inset-top) + 16px);
+	--view-top-fade-mask: linear-gradient(to bottom, rgba(0, 0, 0, var(--view-top-fade-opacity)) 0%, #000000 calc(var(--safe-area-inset-top) + 12px));
+}
+
+/* Mobile Quick Action uses the workspace swipe gesture, independently of bars. */
+body.is-mobile.ultrafocus-mobile-navigation .mobile-navbar {
+	display: none;
+}
+
+body.is-mobile.ultrafocus-mobile-navigation {
+	--navbar-height: 0px;
+}
+
+body.is-mobile.ultrafocus-mobile-toolbar .mobile-toolbar,
+body.is-mobile.ultrafocus-mobile-toolbar .mobile-toolbar-spacer {
+	display: none;
+}
+
+body.is-mobile.ultrafocus-mobile-toolbar {
+	--mobile-toolbar-height: 0px;
 }
